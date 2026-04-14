@@ -44,4 +44,23 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function publishedGame(){
+        return $this->hasMany(Game::class, 'developer_id');
+    }
+    public function library(){
+        return $this->belongsToMany(Game::class, 'libraries','user_id','game_id')->withPivot('purchased_at')->withTimestamps();
+    }
+
+    public function orders(){
+        return $this->hasMany(Order::class);
+    }
+
+    public function reviews(){
+        return $this->hasMany(Review::class);
+    }
+
+    public function gameViews(){
+        return $this->hasMany(GameView::class);
+    }
 }
