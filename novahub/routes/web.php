@@ -36,10 +36,17 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:company')->prefix('company')->name('company.')->group(function () {
         Route::get('/dashboard', [CompanyController::class, 'dashboard'])->name('dashboard');
         Route::get('/games/create', [GameController::class, 'create'])->name('games.create');
+
+        Route::post('/games', [GameController::class, 'store'])->name('games.store');
+
+        Route::get('/game/create', [GameController::class, 'create'])->name('game.create');
     });
 
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::get('/games/validate', [AdminController::class, 'create'])->name('games.validate');
+        
+        Route::post('/games/{game}/approve', [AdminController::class, 'approve'])->name('games.approve');
+        Route::post('/games/{game}/reject', [AdminController::class, 'reject'])->name('games.reject');
     });
 });
