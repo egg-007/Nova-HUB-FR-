@@ -43,4 +43,6 @@ class Game extends Model
     public function views(){
         return $this->hasMany(GameView::class);
     }
+
+
 }

@@ -67,4 +67,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Game::class, 'developer_id'); 
     }
+    public function ownedGames()
+    {
+        return $this->belongsToMany(Game::class, 'game_user')->withPivot('cd_key')->withTimestamps();
+    }
 }
