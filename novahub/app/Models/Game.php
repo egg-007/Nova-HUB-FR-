@@ -28,6 +28,11 @@ class Game extends Model
         return $this->belongsTo(User::class, 'developer_id');
     }
 
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
+
     public function owners(){
         return $this->belongsToMany(User::class, 'libraries','game_id','user_id')->withPivot('purchased_at')->withTimestamps();
     }
@@ -37,9 +42,5 @@ class Game extends Model
     }
     public function views(){
         return $this->hasMany(GameView::class);
-    }
-    public function categories()
-    {
-        return $this->belongsToMany(Category::class);
     }
 }
