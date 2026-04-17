@@ -28,7 +28,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
-Route::post('/logout', [AuthController::class, '/logout'])->middleware('auth')->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
@@ -48,5 +48,10 @@ Route::middleware('auth')->group(function () {
         
         Route::post('/games/{game}/approve', [AdminController::class, 'approve'])->name('games.approve');
         Route::post('/games/{game}/reject', [AdminController::class, 'reject'])->name('games.reject');
-    });
+
+        });
+        Route::get('/admin/queue', [AdminController::class, 'queue'])->name('admin.queue');
+
+        Route::get('/company/games/create', [App\Http\Controllers\CompanyController::class, 'create'])->name('company.games.create');
+Route::post('/company/games', [App\Http\Controllers\CompanyController::class, 'store'])->name('company.games.store');
 });
