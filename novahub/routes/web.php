@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,7 +19,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', fn () => redirect()->route('login'));
+Route::get('/',[HomeController::class, 'index'])->name('home');
+
+Route::get('/games/{game}', [HomeController::class, 'show'])->name('games.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', fn () => view('auth.login'))->name('login');
@@ -45,13 +48,16 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::get('/games/validate', [AdminController::class, 'create'])->name('games.validate');
-        
+
         Route::post('/games/{game}/approve', [AdminController::class, 'approve'])->name('games.approve');
         Route::post('/games/{game}/reject', [AdminController::class, 'reject'])->name('games.reject');
 
-        });
-        Route::get('/admin/queue', [AdminController::class, 'queue'])->name('admin.queue');
+        Route::patch('/admin/games/{game}/approve', [App\Http\Controllers\AdminController::class, 'approve'])->name('admin.games.approve');
+        Route::patch('/admin/games/{game}/reject', [App\Http\Controllers\AdminController::class, 'reject'])->name('admin.games.reject');
 
-        Route::get('/company/games/create', [App\Http\Controllers\CompanyController::class, 'create'])->name('company.games.create');
-Route::post('/company/games', [App\Http\Controllers\CompanyController::class, 'store'])->name('company.games.store');
+    });
+    Route::get('/admin/queue', [AdminController::class, 'queue'])->name('admin.queue');
+
+    Route::get('/company/games/create', [App\Http\Controllers\CompanyController::class, 'create'])->name('company.games.create');
+    Route::post('/company/games', [App\Http\Controllers\CompanyController::class, 'store'])->name('company.games.store');
 });
