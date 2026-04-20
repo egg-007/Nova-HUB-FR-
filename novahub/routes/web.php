@@ -34,6 +34,7 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::middleware('auth')->group(function () {
+    Route::post('/games/{game}/buy', [App\Http\Controllers\CheckoutController::class, 'buy'])->name('games.buy');
     Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
 
     Route::middleware('role:company')->prefix('company')->name('company.')->group(function () {
