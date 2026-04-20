@@ -39,4 +39,6 @@ class AdminController extends Controller
 
         return view('admin.games.validate', compact('pendingGames'));
     }
+
+
 }
