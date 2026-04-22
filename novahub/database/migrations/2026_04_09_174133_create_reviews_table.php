@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('game_id')->constrained('games')->onDelete('cascade');
-            $table->tinyInteger('rating')->unsigned(); // 1 to 5
+            $table->tinyInteger('rating')->unsigned();
             $table->text('comment')->nullable();
             $table->unique(['user_id', 'game_id']);
             $table->timestamps();
