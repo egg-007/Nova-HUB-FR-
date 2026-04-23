@@ -11,6 +11,47 @@
     </div>
 
     @if($games->count() > 0)
+    <div class="mb-10 bg-novaPanel p-6 rounded-xl border border-gray-800 shadow-lg">
+        <form action="{{ route('catalog') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+            
+            <div class="flex-grow relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg width="20" height="20" class="text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Rechercher un jeu (ex: Cyberpunk...)" class="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded text-white focus:outline-none focus:border-novaAccent transition">
+            </div>
+
+            <div class="md:w-64">
+                <select name="category" class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded text-gray-300 focus:outline-none focus:border-novaAccent transition appearance-none">
+                    <option value="">Toutes les catégories</option>
+                    
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="md:w-48">
+    <select name="sort" onchange="this.form.submit()" class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded text-gray-300 focus:border-novaAccent outline-none appearance-none">
+        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Nouveautés</option>
+        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Prix : Croissant</option>
+        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Prix : Décroissant</option>
+        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Plus anciens</option>
+    </select>
+</div>
+
+            <button type="submit" class="bg-novaAccent text-black px-8 py-3 rounded font-bold hover:bg-cyan-400 transition">
+                Filtrer
+            </button>
+            
+            @if(request()->has('search') || request()->has('category'))
+                <a href="{{ route('catalog') }}" class="bg-gray-800 text-white px-6 py-3 rounded font-bold hover:bg-gray-700 transition border border-gray-600 flex items-center justify-center">
+                    Réinitialiser
+                </a>
+            @endif
+        </form>
+    </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @foreach($games as $game)
                 <div class="bg-novaPanel rounded-lg border border-gray-800 overflow-hidden hover:border-novaAccent/50 transition group flex flex-col h-full shadow-lg">
