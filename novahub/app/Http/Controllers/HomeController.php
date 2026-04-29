@@ -6,20 +6,20 @@ use App\Models\Category;
 use App\Models\Game;
 use Illuminate\Http\Request;
 
-
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Game::with(['developer', 'categories'])->where('status', 'approved');
+        $query = Game::with(['developer', 'categories'])
+            ->where('status', 'approved');
 
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%');
         }
 
         if ($request->filled('category')) {
-            $query->whereHas('categories', function($q) use ($request) {
-                $q->where('categories.id', $request->category); 
+            $query->whereHas('categories', function ($q) use ($request) {
+                $q->where('categories.id', $request->category);
             });
         }
 
@@ -35,14 +35,48 @@ class HomeController extends Controller
                 break;
             default:
                 $query->latest();
-                break;
         }
 
-        $games = $query->get();
+        $games = $query->paginate(12);
 
         $categories = Category::all();
 
-        return view('catalog', compact('games', 'categories'));
+        $recommendations = collect();
+
+        if (auth()->check()) {
+            $user = auth()->user();
+
+            $ownedGameIds = $user->ownedGames()->pluck('games.id');
+
+            if ($ownedGameIds->isNotEmpty()) {
+
+                $favoriteCategoryIds = \DB::table('category_game')
+                    ->whereIn('game_id', $ownedGameIds)
+                    ->pluck('category_id')
+                    ->unique();
+
+                if ($favoriteCategoryIds->isNotEmpty()) {
+                    $recommendations = Game::where('status', 'approved')
+                        ->whereHas('categories', function ($q) use ($favoriteCategoryIds) {
+                            $q->whereIn('categories.id', $favoriteCategoryIds);
+                        })
+                        ->whereNotIn('id', $ownedGameIds)
+                        ->with(['developer', 'categories'])
+                        ->inRandomOrder()
+                        ->take(4)
+                        ->get();
+                }
+            }
+        }
+
+        if ($recommendations->isEmpty()) {
+            $recommendations = Game::where('status', 'approved')
+                ->with(['developer', 'categories'])
+                ->latest()
+                ->take(4)
+                ->get();
+        }
+        return view('catalog', compact('games', 'categories', 'recommendations'));
     }
 
     public function show(Game $game)
@@ -50,7 +84,6 @@ class HomeController extends Controller
         if ($game->status !== 'approved') {
             abort(404);
         }
-
         return view('games.show', compact('game'));
     }
 }
