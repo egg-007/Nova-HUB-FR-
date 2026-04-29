@@ -17,6 +17,7 @@ class Game extends Model
         'status',
         'image',
         'release_date',
+        'is_recommended',
     ];
 
     protected $casts = [
@@ -52,5 +53,20 @@ class Game extends Model
     public function averageRating()
     {
         return round($this->reviews()->avg('rating'), 1) ?: 0;
+    }
+
+    public function requirements()
+    {
+        return $this->hasMany(GameRequirement::class);
+    }
+
+    public function minSpecs()
+    {
+        return $this->requirements()->where('type', 'minimum')->first();
+    }
+
+    public function recSpecs()
+    {
+        return $this->requirements()->where('type', 'recommended')->first();
     }
 }
