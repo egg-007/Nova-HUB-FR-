@@ -28,6 +28,15 @@ class StoreGameRequest extends FormRequest
             'image' => 'nullable|image:jpeg,png,jpg,webp|max:2048',
             'categories' => 'required|array',
             'categories.*' => 'exists:categories,id',
+
+
+            'requirements' => 'nullable|array|min:2',
+            'requirements.*.type' => 'required|string',
+            'requirements.*.os' => 'required|string',
+            'requirements.*.cpu' => 'required|string',
+            'requirements.*.gpu' => 'required|string',
+            'requirements.*.ram' => 'required|string',
+            'requirements.*.storage' => 'required|string',
         ];
     }
 }
